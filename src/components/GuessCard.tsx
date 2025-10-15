@@ -1,49 +1,73 @@
-import type { GuessResult } from '../types/iceCream';
-import { FeedbackGrid } from './FeedbackGrid';
+import type { GuessResult } from "../types/iceCream";
 
 interface GuessCardProps {
   guess: GuessResult;
-  index: number;
 }
 
-export const GuessCard: React.FC<GuessCardProps> = ({ guess, index }) => (
-  <article className="group relative overflow-hidden rounded-3xl border border-white/70 bg-white/80 p-5 shadow-lg backdrop-blur transition hover:-translate-y-1 hover:shadow-xl">
-    <div className="absolute inset-0 -z-10 bg-gradient-to-r from-ice-primary/10 via-transparent to-ice-primary/10 opacity-0 transition group-hover:opacity-100" />
-    <header className="flex flex-col gap-3 border-b border-slate-100 pb-4 sm:flex-row sm:items-center sm:justify-between">
-      <div>
-        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
-          Intento {index + 1}
-        </p>
-        <h3 className="mt-1 text-2xl font-semibold text-slate-900">{guess.flavor.name}</h3>
-      </div>
-      <span className="inline-flex items-center gap-2 rounded-full bg-ice-primary/15 px-3 py-1 text-xs font-semibold text-ice-primary">
-        Base: {guess.flavor.base}
-      </span>
-    </header>
+export const GuessCard: React.FC<GuessCardProps> = ({ guess }) => {
+  const getBackgroundClass = (result: "correct" | "partial" | "incorrect") => {
+    switch (result) {
+      case "correct":
+        return "bg-green-500 text-white hover:shadow-lg hover:shadow-green-400/30 hover:-translate-y-0.5";
+      case "partial":
+        return "bg-yellow-500 text-slate-900 hover:shadow-lg hover:shadow-yellow-400/30 hover:-translate-y-0.5";
+      case "incorrect":
+        return "bg-red-500 text-white hover:shadow-lg hover:shadow-red-400/30 hover:-translate-y-0.5";
+      default:
+        return "bg-slate-50/80 text-slate-900 hover:shadow-lg hover:shadow-slate-400 hover:-translate-y-0.5";
+    }
+  };
 
-    <div className="grid gap-3 py-4 text-sm text-slate-600 sm:grid-cols-3">
-      <div className="rounded-2xl bg-slate-50/80 p-3">
-        <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Color</p>
-        <p className="text-base font-medium text-slate-900">
-          {guess.flavor.color || 'Desconocido'}
-        </p>
-      </div>
-      <div className="rounded-2xl bg-slate-50/80 p-3">
-        <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Origen</p>
-        <p className="text-base font-medium text-slate-900">
-          {guess.flavor.original_country || 'Desconocido'}
-        </p>
-      </div>
-      <div className="rounded-2xl bg-slate-50/80 p-3">
-        <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Creación</p>
-        <p className="text-base font-medium text-slate-900">
-          {guess.flavor.creation_year || 'Desconocido'}
-        </p>
-      </div>
-    </div>
+  return (
+    <article className="p-4">
+      <div className="grid grid-cols-5 gap-8">
+        <div
+          className={`flex cursor-pointer items-center justify-center rounded-lg p-3 transition-all duration-200 ${getBackgroundClass(
+            guess.matches.name,
+          )}`}
+        >
+          <p className="text-base font-medium">
+            {guess.flavor.name || "Desconocido"}
+          </p>
+        </div>
+        <div
+          className={`flex cursor-pointer items-center justify-center rounded-lg p-3 transition-all duration-200 ${getBackgroundClass(
+            guess.matches.color,
+          )}`}
+        >
+          <p className="text-base font-medium">
+            {guess.flavor.color || "Desconocido"}
+          </p>
+        </div>
+        <div
+          className={`flex cursor-pointer items-center justify-center rounded-lg p-3 transition-all duration-200 ${getBackgroundClass(
+            guess.matches.base,
+          )}`}
+        >
+          <p className="text-base font-medium">
+            {guess.flavor.base || "Desconocido"}
+          </p>
+        </div>
+        <div
+          className={`flex cursor-pointer items-center justify-center rounded-lg p-3 transition-all duration-200 ${getBackgroundClass(
+            guess.matches.country,
+          )}`}
+        >
+          <p className="text-base font-medium">
+            {guess.flavor.original_country || "Desconocido"}
+          </p>
+        </div>
 
-    <div className="rounded-2xl border border-slate-100 bg-white/70 p-4">
-      <FeedbackGrid matches={guess.matches} />
-    </div>
-  </article>
-);
+        <div
+          className={`flex cursor-pointer items-center justify-center rounded-lg p-3 transition-all duration-200 ${getBackgroundClass(
+            guess.matches.year,
+          )}`}
+        >
+          <p className="text-base font-medium">
+            {guess.flavor.creation_year || "Desconocido"}
+          </p>
+        </div>
+      </div>
+    </article>
+  );
+};

@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import { supabase } from '../lib/supabase';
-import type { IceCreamFlavor } from '../types/iceCream';
+import { useEffect, useState } from "react";
+import { supabase } from "../lib/supabase";
+import type { IceCreamFlavor } from "../types/iceCream";
 
 interface UseFlavorSearchResult {
   suggestions: IceCreamFlavor[];
@@ -26,14 +26,14 @@ export const useFlavorSearch = (query: string): UseFlavorSearchResult => {
       setError(null);
 
       const { data, error: supabaseError } = await supabase
-        .from('ice_cream_flavors')
-        .select('id, name, base, color, original_country, creation_year')
-        .ilike('name', `%${query}%`)
+        .from("ice_cream_flavors")
+        .select("id, name, base, color, original_country, creation_year")
+        .ilike("name", `%${query}%`)
         .limit(10);
 
       if (!controller.signal.aborted) {
         if (supabaseError) {
-          setError('No se pudieron obtener los sabores.');
+          setError("No se pudieron obtener los sabores.");
           setSuggestions([]);
         } else if (data) {
           setSuggestions(data);

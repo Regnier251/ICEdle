@@ -3,11 +3,16 @@
 @layer base {
   :root {
     color: #0f172a;
-    background-color: #f8fafc;
+    background-image: url("../public/image/background_ice-cream.jpeg");
   }
 
   body {
-    background: linear-gradient(to bottom right, rgb(var(--ice-cream)), white, rgb(var(--ice-primary) / 0.1));
+    background: linear-gradient(
+      to bottom right,
+      rgb(var(--ice-cream)),
+      white,
+      rgb(var(--ice-primary) / 0.1)
+    );
     min-height: 100vh;
     color: rgb(15 23 42);
     font-smooth: antialiased;

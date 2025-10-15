@@ -1,4 +1,4 @@
-export type IceCreamBase = 'Leche' | 'Agua' | 'Crema' | 'Leche o Agua';
+export type IceCreamBase = "Leche" | "Agua" | "Crema" | "Leche o Agua";
 
 export interface IceCreamFlavor {
   id: number;
@@ -9,7 +9,7 @@ export interface IceCreamFlavor {
   creation_year: string;
 }
 
-export type MatchStatus = 'correct' | 'partial' | 'incorrect';
+export type MatchStatus = "correct" | "partial" | "incorrect";
 
 export interface GuessMatches {
   name: MatchStatus;
