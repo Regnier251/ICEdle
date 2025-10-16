@@ -1,9 +1,37 @@
 @import "tailwindcss";
 
+@keyframes flipIn {
+  0% {
+    opacity: 0;
+    transform: perspective(400px) rotateY(90deg);
+    animation-timing-function: ease-in;
+  }
+  40% {
+    transform: perspective(400px) rotateY(-10deg);
+    animation-timing-function: ease-in;
+  }
+  60% {
+    opacity: 1;
+    transform: perspective(400px) rotateY(10deg);
+  }
+  80% {
+    transform: perspective(400px) rotateY(-5deg);
+  }
+  100% {
+    transform: perspective(400px);
+  }
+}
+
+.animate-flip {
+  animation: flipIn 0.6s ease-out backwards;
+}
+
 @layer base {
   :root {
     color: #0f172a;
     background-image: url("../public/image/background_ice-cream.jpeg");
+    background-size: auto;
+    background-position-x: center;
   }
 
   body {

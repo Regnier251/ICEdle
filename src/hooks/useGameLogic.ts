@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import type { GuessResult, IceCreamFlavor } from "../types/iceCream";
-import { compareFlavors } from "../utils/gameLogic";
+import { compareFlavors, generateHints, getNextHintInfo } from "../utils/gameLogic";
 
 type GameStatus = "playing" | "won";
 
@@ -30,6 +30,15 @@ export const useGameLogic = () => {
     });
   };
 
+  const availableHints = useMemo(() => {
+    if (!targetFlavor) return [];
+    return generateHints(targetFlavor, guesses.length);
+  }, [targetFlavor, guesses.length]);
+
+  const nextHintInfo = useMemo(() => {
+    return getNextHintInfo(guesses.length);
+  }, [guesses.length]);
+
   return {
     targetFlavor,
     setTargetFlavor,
@@ -37,6 +46,8 @@ export const useGameLogic = () => {
     status,
     submitGuess,
     resetGame,
+    availableHints,
+    nextHintInfo,
   };
 };
 

@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useGameLogic } from "../hooks/useGameLogic";
 import { useSupabase } from "../hooks/useSupabase";
 import type { IceCreamFlavor } from "../types/iceCream";
-// import { DailyStats } from './DailyStats';
 import { FlavorInput } from "./FlavorInput";
 import { GuessCard } from "./GuessCard";
 import { HintsSection } from "./HintsSection";
@@ -19,7 +18,7 @@ export const GameBoard: React.FC = () => {
     setFetchError(null);
     const { data, error } = await supabase
       .from("ice_cream_flavors")
-      .select("id, name, base, color, original_country, creation_year")
+      .select("id, name, base, color, origin, flavor_intensity, texture, mix_ins, seasonality")
       .limit(1)
       .maybeSingle();
 
@@ -56,25 +55,6 @@ export const GameBoard: React.FC = () => {
                 className="mx-auto h-32 w-auto cursor-pointer object-contain transition-all duration-200 hover:scale-110 sm:h-40"
               />
             </div>
-            <p className="mx-auto max-w-3xl text-sm text-slate-600 sm:text-base">
-              Adivina el sabor de helado del día comparando sus atributos contra
-              nuestra colección global. Cada intento revela pistas codificadas
-              por color para acercarte al sabor correcto.
-            </p>
-          </div>
-          <div className="flex flex-wrap items-center justify-center gap-3 text-xs font-medium text-slate-500">
-            <span className="inline-flex items-center gap-2 rounded-full bg-white/70 px-3 py-1 shadow-sm ring-1 ring-white/60">
-              <span className="h-2 w-2 rounded-full bg-green-500" />{" "}
-              Coincidencia exacta
-            </span>
-            <span className="inline-flex items-center gap-2 rounded-full bg-white/70 px-3 py-1 shadow-sm ring-1 ring-white/60">
-              <span className="h-2 w-2 rounded-full bg-yellow-500" />{" "}
-              Coincidencia parcial
-            </span>
-            <span className="inline-flex items-center gap-2 rounded-full bg-white/70 px-3 py-1 shadow-sm ring-1 ring-white/60">
-              <span className="h-2 w-2 rounded-full bg-red-500" /> Sin
-              coincidencia
-            </span>
           </div>
         </header>
         <section>
@@ -85,15 +65,9 @@ export const GameBoard: React.FC = () => {
             <div className="sticky top-4 z-50 mb-6">
               <div className="rounded-3xl border border-white/60 bg-white/95 p-6 shadow-xl backdrop-blur-md">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                  <div className="space-y-1">
-                    <h2 className="text-xl font-semibold text-slate-900 sm:text-2xl">
-                      Realiza un intento
-                    </h2>
-                    <p className="text-sm text-slate-600">
-                      Explora todas las combinaciones que necesites.
-                    </p>
+                  <div className="hidden sm:block">
                   </div>
-                  <div className="rounded-2xl bg-slate-100 px-4 py-2 text-center text-xs font-semibold tracking-widest text-slate-600 uppercase">
+                  <div className="rounded-2xl bg-slate-100 px-4 text-center text-xs font-semibold tracking-widest text-slate-600 uppercase">
                     Intentos realizados{" "}
                     <span className="bg-ice-primary/15 text-ice-primary ml-2 rounded-full px-2 py-1 text-sm font-bold">
                       {totalGuesses}
@@ -101,22 +75,19 @@ export const GameBoard: React.FC = () => {
                   </div>
                 </div>
                 {/* Input component */}
-                <div className="mt-6">
                   <FlavorInput
                     onSubmit={handleGuess}
                     disabled={
                       isLoadingFlavor || !targetFlavor || status === "won"
                     }
                   />
-                </div>
-
                 {fetchError && (
                   <p className="bg-ice-incorrect/10 text-ice-incorrect mt-4 rounded-2xl px-4 py-3 text-sm">
                     {fetchError}
                   </p>
                 )}
                 {status === "won" && (
-                  <p className="bg-ice-correct/10 text-ice-correct mt-4 rounded-2xl px-4 py-3 text-sm font-semibold">
+                  <p className="mt-4 rounded-2xl px-4 py-3 text-sm font-semibold text-center">
                     ¡Felicidades! Adivinaste el sabor del día.
                   </p>
                 )}
@@ -124,30 +95,45 @@ export const GameBoard: React.FC = () => {
             </div>
 
             {/* Headers de atributos */}
-            <div className="mb-6 grid grid-cols-5 gap-4 text-center">
-              <div className="transaction-all cursor-pointer rounded-xl bg-white/80 p-3 shadow-sm backdrop-blur duration-200 hover:scale-110">
+            <div className="mb-6 grid grid-cols-8 gap-6">
+              <div className="h-[48px] flex items-center justify-center transaction-all cursor-pointer rounded-xl bg-white/80 px-4 shadow-sm backdrop-blur duration-200 hover:scale-110">
                 <span className="text-sm font-semibold tracking-wider text-slate-600 uppercase">
                   Nombre
                 </span>
               </div>
-              <div className="transaction-all cursor-pointer rounded-xl bg-white/80 p-3 shadow-sm backdrop-blur duration-200 hover:scale-110">
-                <span className="text-sm font-semibold tracking-wider text-slate-600 uppercase">
-                  Color
-                </span>
-              </div>
-              <div className="transaction-all cursor-pointer rounded-xl bg-white/80 p-3 shadow-sm backdrop-blur duration-200 hover:scale-110">
+              <div className="h-[48px] flex items-center justify-center transaction-all cursor-pointer rounded-xl bg-white/80 px-4 shadow-sm backdrop-blur duration-200 hover:scale-110">
                 <span className="text-sm font-semibold tracking-wider text-slate-600 uppercase">
                   Base
                 </span>
               </div>
-              <div className="transaction-all cursor-pointer rounded-xl bg-white/80 p-3 shadow-sm backdrop-blur duration-200 hover:scale-110">
+              <div className="h-[48px] flex items-center justify-center transaction-all cursor-pointer rounded-xl bg-white/80 px-4 shadow-sm backdrop-blur duration-200 hover:scale-110">
+                <span className="text-sm font-semibold tracking-wider text-slate-600 uppercase">
+                  Color
+                </span>
+              </div>
+              <div className="h-[48px] flex items-center justify-center transaction-all cursor-pointer rounded-xl bg-white/80 px-4 shadow-sm backdrop-blur duration-200 hover:scale-110">
                 <span className="text-sm font-semibold tracking-wider text-slate-600 uppercase">
                   Origen
                 </span>
               </div>
-              <div className="transaction-all cursor-pointer rounded-xl bg-white/80 p-3 shadow-sm backdrop-blur duration-200 hover:scale-110">
+              <div className="h-[48px] flex items-center justify-center transaction-all cursor-pointer rounded-xl bg-white/80 px-4 shadow-sm backdrop-blur duration-200 hover:scale-110">
                 <span className="text-sm font-semibold tracking-wider text-slate-600 uppercase">
-                  Año
+                  Intensidad
+                </span>
+              </div>
+              <div className="h-[48px] flex items-center justify-center transaction-all cursor-pointer rounded-xl bg-white/80 px-4 shadow-sm backdrop-blur duration-200 hover:scale-110">
+                <span className="text-sm font-semibold tracking-wider text-slate-600 uppercase">
+                  Textura
+                </span>
+              </div>
+              <div className="h-[48px] flex items-center justify-center transaction-all cursor-pointer rounded-xl bg-white/80 px-4 shadow-sm backdrop-blur duration-200 hover:scale-110">
+                <span className="text-sm font-semibold tracking-wider text-slate-600 uppercase">
+                  Mix-ins
+                </span>
+              </div>
+              <div className="h-[48px] flex items-center justify-center transaction-all cursor-pointer rounded-xl bg-white/80 px-4 shadow-sm backdrop-blur duration-200 hover:scale-110">
+                <span className="text-sm font-semibold tracking-wider text-slate-600 uppercase">
+                  Temporada
                 </span>
               </div>
             </div>
@@ -169,23 +155,11 @@ export const GameBoard: React.FC = () => {
                     zIndex: guesses.length - index,
                   }}
                 >
-                  <GuessCard guess={guess} />
+                  <GuessCard guess={guess} index={guesses.length - index - 1} />
                 </div>
               ))}
             </div>
           </div>
-
-          <aside className="space-y-6">
-            {/* <DailyStats />
-            <div className="rounded-3xl border border-white/60 bg-white/80 p-6 shadow-lg backdrop-blur">
-              <h3 className="text-lg font-semibold text-slate-900">Consejos rápidos</h3>
-              <ul className="mt-4 space-y-3 text-sm text-slate-600">
-                <li>🎯 Busca primero sabores clásicos para calibrar los atributos.</li>
-                <li>🌎 Observa el país de origen para descubrir pistas culturales.</li>
-                <li>🕰️ Las décadas ayudan a aproximar recetas tradicionales o modernas.</li>
-              </ul>
-            </div> */}
-          </aside>
         </section>
       </div>
     </div>

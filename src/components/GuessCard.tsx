@@ -2,9 +2,10 @@ import type { GuessResult } from "../types/iceCream";
 
 interface GuessCardProps {
   guess: GuessResult;
+  index: number;
 }
 
-export const GuessCard: React.FC<GuessCardProps> = ({ guess }) => {
+export const GuessCard: React.FC<GuessCardProps> = ({ guess}) => {
   const getBackgroundClass = (result: "correct" | "partial" | "incorrect") => {
     switch (result) {
       case "correct":
@@ -19,54 +20,30 @@ export const GuessCard: React.FC<GuessCardProps> = ({ guess }) => {
   };
 
   return (
-    <article className="p-4">
-      <div className="grid grid-cols-5 gap-8">
-        <div
-          className={`flex cursor-pointer items-center justify-center rounded-lg p-3 transition-all duration-200 ${getBackgroundClass(
-            guess.matches.name,
-          )}`}
-        >
-          <p className="text-base font-medium">
-            {guess.flavor.name || "Desconocido"}
-          </p>
-        </div>
-        <div
-          className={`flex cursor-pointer items-center justify-center rounded-lg p-3 transition-all duration-200 ${getBackgroundClass(
-            guess.matches.color,
-          )}`}
-        >
-          <p className="text-base font-medium">
-            {guess.flavor.color || "Desconocido"}
-          </p>
-        </div>
-        <div
-          className={`flex cursor-pointer items-center justify-center rounded-lg p-3 transition-all duration-200 ${getBackgroundClass(
-            guess.matches.base,
-          )}`}
-        >
-          <p className="text-base font-medium">
-            {guess.flavor.base || "Desconocido"}
-          </p>
-        </div>
-        <div
-          className={`flex cursor-pointer items-center justify-center rounded-lg p-3 transition-all duration-200 ${getBackgroundClass(
-            guess.matches.country,
-          )}`}
-        >
-          <p className="text-base font-medium">
-            {guess.flavor.original_country || "Desconocido"}
-          </p>
-        </div>
-
-        <div
-          className={`flex cursor-pointer items-center justify-center rounded-lg p-3 transition-all duration-200 ${getBackgroundClass(
-            guess.matches.year,
-          )}`}
-        >
-          <p className="text-base font-medium">
-            {guess.flavor.creation_year || "Desconocido"}
-          </p>
-        </div>
+    <article>
+      <div className="grid grid-cols-8 gap-6 min-w-5xl">
+        {[
+          { match: guess.matches.name, value: guess.flavor.name, delay: 0 },
+          { match: guess.matches.base, value: guess.flavor.base, delay: 4 },
+          { match: guess.matches.color, value: guess.flavor.color, delay: 8 },
+          { match: guess.matches.origin, value: guess.flavor.origin, delay: 12 },
+          { match: guess.matches.flavor_intensity, value: guess.flavor.flavor_intensity, delay: 16 },
+          { match: guess.matches.texture, value: guess.flavor.texture, delay: 20 },
+          { match: guess.matches.mix_ins, value: guess.flavor.mix_ins, delay: 24 },
+          { match: guess.matches.seasonality, value: guess.flavor.seasonality, delay: 28 }
+        ].map((item, idx) => (
+          <div
+            key={idx}
+            style={{ animationDelay: `${item.delay * 0.1}s` }}
+            className={`h-24 animate-flip flex cursor-pointer items-center justify-center rounded-lg px-4 transition-all duration-200 ${getBackgroundClass(
+              item.match
+            )}`}
+          >
+            <p className="text-base font-medium">
+              {item.value || "—"}
+            </p>
+          </div>
+        ))}
       </div>
     </article>
   );

@@ -27,7 +27,7 @@ export const useFlavorSearch = (query: string): UseFlavorSearchResult => {
 
       const { data, error: supabaseError } = await supabase
         .from("ice_cream_flavors")
-        .select("id, name, base, color, original_country, creation_year")
+        .select("id, name, base, color, origin, flavor_intensity, texture, mix_ins, seasonality")
         .ilike("name", `%${query}%`)
         .limit(10);
 

@@ -1,12 +1,13 @@
-export type IceCreamBase = "Leche" | "Agua" | "Crema" | "Leche o Agua";
-
 export interface IceCreamFlavor {
   id: number;
   name: string;
-  base: IceCreamBase;
+  base: string;
   color: string;
-  original_country: string;
-  creation_year: string;
+  origin: string;
+  flavor_intensity: string;
+  texture: string;
+  mix_ins: string;
+  seasonality: string;
 }
 
 export type MatchStatus = "correct" | "partial" | "incorrect";
@@ -15,8 +16,11 @@ export interface GuessMatches {
   name: MatchStatus;
   base: MatchStatus;
   color: MatchStatus;
-  country: MatchStatus;
-  year: MatchStatus;
+  origin: MatchStatus;
+  flavor_intensity: MatchStatus;
+  texture: MatchStatus;
+  mix_ins: MatchStatus;
+  seasonality: MatchStatus;
 }
 
 export interface GuessResult {

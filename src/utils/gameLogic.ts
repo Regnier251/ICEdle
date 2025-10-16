@@ -4,6 +4,15 @@ import type {
   MatchStatus,
 } from "../types/iceCream";
 
+export interface Hint {
+  id: number;
+  unlockAt: number;
+  text: string;
+  icon: string;
+  type: 'flavor' | 'texture' | 'season';
+  isUnlocked: boolean;
+}
+
 const normalize = (value: string) =>
   value
     .normalize("NFD")
@@ -23,20 +32,56 @@ const compareTextPartial = (guess: string, target: string): MatchStatus => {
     : "incorrect";
 };
 
-const compareYear = (guessYear: string, targetYear: string): MatchStatus => {
-  if (!guessYear || !targetYear) return "incorrect";
-  if (compareExact(guessYear, targetYear) === "correct") return "correct";
+export const generateHints = (
+  flavor: IceCreamFlavor,
+  guessCount: number
+): Hint[] => {
+  const formatIntensity = (intensity: string) => {
+    return `${intensity.toLowerCase()} intensidad`;
+  };
 
-  const guessNum = parseInt(guessYear, 10);
-  const targetNum = parseInt(targetYear, 10);
+  const formatTexture = (texture: string) => {
+    return `textura ${texture.toLowerCase()}`;
+  };
 
-  if (Number.isNaN(guessNum) || Number.isNaN(targetNum)) {
-    return compareTextPartial(guessYear, targetYear);
-  }
+  const hints: Hint[] = [
+    {
+      id: 1,
+      unlockAt: 5,
+      type: 'flavor',
+      icon: '🌟',
+      text: `Este helado tiene un sabor de ${formatIntensity(flavor.flavor_intensity)}.`,
+      isUnlocked: guessCount >= 5
+    },
+    {
+      id: 2,
+      unlockAt: 11,
+      type: 'texture',
+      icon: '🍨',
+      text: `La textura del helado es ${formatTexture(flavor.texture)}.`,
+      isUnlocked: guessCount >= 11
+    },
+    {
+      id: 3,
+      unlockAt: 15,
+      type: 'season',
+      icon: '🗓️',
+      text: `Este helado es típico de ${flavor.seasonality.toLowerCase()}.`,
+      isUnlocked: guessCount >= 15
+    }
+  ];
 
-  const guessDecade = Math.floor(guessNum / 10) * 10;
-  const targetDecade = Math.floor(targetNum / 10) * 10;
-  return Math.abs(guessDecade - targetDecade) <= 10 ? "partial" : "incorrect";
+  return hints;
+};
+
+export const getNextHintInfo = (guessCount: number): { attemptsUntilNext: number; nextUnlockAt: number | null } => {
+  const unlockThresholds = [5, 11, 15];
+  const nextThreshold = unlockThresholds.find(threshold => threshold > guessCount);
+  
+  return {
+    attemptsUntilNext: nextThreshold ? nextThreshold - guessCount : 0,
+    nextUnlockAt: nextThreshold || null
+  };
 };
 
 export const compareFlavors = (
@@ -44,8 +89,11 @@ export const compareFlavors = (
   target: IceCreamFlavor,
 ): GuessMatches => ({
   name: compareExact(guess.name, target.name),
-  base: guess.base === target.base ? "correct" : "incorrect",
+  base: compareExact(guess.base, target.base),
   color: compareTextPartial(guess.color, target.color),
-  country: compareTextPartial(guess.original_country, target.original_country),
-  year: compareYear(guess.creation_year, target.creation_year),
+  origin: compareTextPartial(guess.origin, target.origin),
+  flavor_intensity: compareExact(guess.flavor_intensity, target.flavor_intensity),
+  texture: compareExact(guess.texture, target.texture),
+  mix_ins: compareTextPartial(guess.mix_ins, target.mix_ins),
+  seasonality: compareExact(guess.seasonality, target.seasonality)
 });
