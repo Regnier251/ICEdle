@@ -22,7 +22,8 @@ export const HintsSection: React.FC<HintsSectionProps> = ({
         text: `Este helado tiene un sabor de ${targetFlavor.flavor_intensity.toLowerCase()}.`,
         icon: '🌟',
         type: 'flavor',
-        isRevealed: revealedHints.includes(1)
+        isRevealed: revealedHints.includes(1),
+        imageUrl: '/image/ice_cream_hit_1.jpg'
       },
       {
         id: 2,
@@ -30,7 +31,8 @@ export const HintsSection: React.FC<HintsSectionProps> = ({
         text: `La textura del helado es ${targetFlavor.texture.toLowerCase()}.`,
         icon: '🍨',
         type: 'texture',
-        isRevealed: revealedHints.includes(2)
+        isRevealed: revealedHints.includes(2),
+        imageUrl: '/image/ice_cream_hit_1.jpg'
       },
       {
         id: 3,
@@ -38,7 +40,8 @@ export const HintsSection: React.FC<HintsSectionProps> = ({
         text: `Este helado es típico de ${targetFlavor.seasonality.toLowerCase()}.`,
         icon: '🗓️',
         type: 'season',
-        isRevealed: revealedHints.includes(3)
+        isRevealed: revealedHints.includes(3),
+        imageUrl: '/image/ice_cream_hit_1.jpg'
       },
     ];
   }, [targetFlavor, revealedHints]);
@@ -71,23 +74,41 @@ export const HintsSection: React.FC<HintsSectionProps> = ({
               }`}
             >
               {guessCount >= hint.unlockAt ? (
-                <div className={`space-y-2 ${!hint.isRevealed && 'filter blur-sm hover:blur-none transition-all duration-300'}`}>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xl" role="img" aria-label={hint.type}>
-                      {hint.icon}
-                    </span>
-                    <span className="text-sm font-medium text-slate-500">
-                      {hint.type === 'flavor' ? 'Sabor' : hint.type === 'texture' ? 'Textura' : 'Temporada'}
-                    </span>
-                  </div>
-                  <p className="text-sm text-slate-700">
-                    {hint.text}
-                  </p>
-                  {!hint.isRevealed && (
-                    <p className="text-xs text-cyan-600 text-center mt-2">
+                <div className="relative">
+                  {/* Contenedor de la imagen que se desvanece */}
+                  <div className={`
+                    absolute inset-0 flex flex-col items-center justify-center bg-white z-10
+                    transition-opacity duration-500 ease-in-out
+                    ${hint.isRevealed ? 'opacity-0 pointer-events-none' : 'opacity-100'}
+                  `}>
+                    {/* Imagen de la pista */}
+                    <img 
+                      src={hint.imageUrl} // URL de tu imagen
+                      alt="Pista visual"
+                      className="w-16 h-16 object-cover mb-2"
+                    />
+                    <p className="text-xs text-cyan-600 text-center">
                       Click para revelar
                     </p>
-                  )}
+                  </div>
+
+                  {/* Contenido del hint que aparece */}
+                  <div className={`
+                    space-y-2 transition-opacity duration-500 delay-200
+                    ${hint.isRevealed ? 'opacity-100' : 'opacity-0'}
+                  `}>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xl" role="img" aria-label={hint.type}>
+                        {hint.icon}
+                      </span>
+                      <span className="text-sm font-medium text-slate-500">
+                        {hint.type === 'flavor' ? 'Sabor' : hint.type === 'texture' ? 'Textura' : 'Temporada'}
+                      </span>
+                    </div>
+                    <p className="text-sm text-slate-700">
+                      {hint.text}
+                    </p>
+                  </div>
                 </div>
               ) : (
                 <div className="space-y-2">

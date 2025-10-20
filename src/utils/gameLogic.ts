@@ -23,13 +23,31 @@ const normalize = (value: string) =>
 const compareExact = (guess: string, target: string): MatchStatus =>
   normalize(guess) === normalize(target) ? "correct" : "incorrect";
 
+const tokenize = (value: string) =>
+  normalize(value)
+    .split(/[^a-z0-9]+/)
+    .filter(Boolean);
+
 const compareTextPartial = (guess: string, target: string): MatchStatus => {
   if (compareExact(guess, target) === "correct") return "correct";
   const normalizedGuess = normalize(guess);
   const normalizedTarget = normalize(target);
-  return normalizedGuess && normalizedTarget.includes(normalizedGuess)
-    ? "partial"
-    : "incorrect";
+  if (
+    normalizedGuess &&
+    (normalizedTarget.includes(normalizedGuess) ||
+      normalizedGuess.includes(normalizedTarget))
+  ) {
+    return "partial";
+  }
+
+  const guessTokens = tokenize(guess);
+  const targetTokens = tokenize(target);
+  const hasOverlap =
+    guessTokens.length > 0 &&
+    targetTokens.length > 0 &&
+    guessTokens.some((token) => targetTokens.includes(token));
+
+  return hasOverlap ? "partial" : "incorrect";
 };
 
 export const generateHints = (
@@ -55,11 +73,11 @@ export const generateHints = (
     },
     {
       id: 2,
-      unlockAt: 11,
+      unlockAt: 10,
       type: 'texture',
       icon: '🍨',
       text: `La textura del helado es ${formatTexture(flavor.texture)}.`,
-      isUnlocked: guessCount >= 11
+      isUnlocked: guessCount >= 10
     },
     {
       id: 3,
@@ -75,7 +93,7 @@ export const generateHints = (
 };
 
 export const getNextHintInfo = (guessCount: number): { attemptsUntilNext: number; nextUnlockAt: number | null } => {
-  const unlockThresholds = [5, 11, 15];
+  const unlockThresholds = [5, 10, 15];
   const nextThreshold = unlockThresholds.find(threshold => threshold > guessCount);
   
   return {

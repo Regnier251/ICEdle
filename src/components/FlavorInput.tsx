@@ -6,20 +6,32 @@ import type { IceCreamFlavor } from "../types/iceCream";
 interface FlavorInputProps {
   onSubmit: (flavor: IceCreamFlavor) => void;
   disabled?: boolean;
+  usedFlavorIds?: number[];
 }
 
 export const FlavorInput: React.FC<FlavorInputProps> = ({
   onSubmit,
   disabled,
+  usedFlavorIds,
 }) => {
   const [query, setQuery] = useState("");
   const { suggestions, isLoading, error } = useFlavorSearch(query);
 
-  const hasSuggestions = useMemo(() => suggestions.length > 0, [suggestions]);
+  // filterId repeateds
+  const filteredSuggestions = useMemo(() => {
+    if (!usedFlavorIds?.length) return suggestions;
+    const usedIds = new Set(usedFlavorIds);
+    return suggestions.filter((flavor) => !usedIds.has(flavor.id));
+  }, [suggestions, usedFlavorIds]);
+
+  const hasSuggestions = useMemo(
+    () => filteredSuggestions.length > 0,
+    [filteredSuggestions],
+  );
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const match = suggestions.find(
+    const match = filteredSuggestions.find(
       (flavor) => flavor.name.toLowerCase() === query.trim().toLowerCase(),
     );
     if (match) {
@@ -42,14 +54,14 @@ export const FlavorInput: React.FC<FlavorInputProps> = ({
             disabled={disabled}
             placeholder="Busca por nombre de sabor..."
             autoComplete="off"
-            className="focus:border-ice-primary w-full rounded-2xl border border-slate-200 bg-white/90 px-4 py-3 text-base font-medium text-slate-800 shadow-sm transition outline-none focus:ring-1 focus:ring-cyan-500 disabled:cursor-not-allowed disabled:bg-slate-100"
+            className="w-full rounded-2xl border border-slate-200 bg-white/90 px-4 py-3 text-base font-medium text-slate-800 shadow-sm transition outline-none focus:ring-1 focus:ring-cyan-500 disabled:cursor-not-allowed disabled:bg-slate-100"
           />
         </label>
 
         <button
           type="submit"
           disabled={disabled}
-          className="from-ice-primary mt-4 w-full rounded-2xl bg-gradient-to-r to-cyan-500 px-4 py-3 text-base font-semibold text-white shadow-lg transition hover:shadow-xl focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-blue-500 disabled:opacity-60"
+          className="mt-4 w-full rounded-2xl bg-gradient-to-r to-cyan-500 px-4 py-3 text-base font-semibold text-white shadow-lg transition hover:shadow-xl focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-blue-500 disabled:opacity-60"
         >
           {!disabled ? "Adivinar" : "Cargando sabor..."}
         </button>
@@ -68,12 +80,12 @@ export const FlavorInput: React.FC<FlavorInputProps> = ({
             )}
             {!isLoading &&
               hasSuggestions &&
-              suggestions.map((flavor) => (
+              filteredSuggestions.map((flavor) => (
                 <button
                   type="button"
                   key={flavor.id}
                   onClick={() => selectSuggestion(flavor)}
-                  className="hover:bg-ice-cream/70 focus-visible:outline-ice-primary flex w-full items-center justify-between gap-3 px-4 py-3 text-left text-sm text-slate-600 transition focus-visible:outline focus-visible:outline-offset-2"
+                  className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left text-sm text-slate-600 transition focus-visible:outline focus-visible:outline-offset-2"
                 >
                   <div>
                     <p className="font-semibold text-slate-900">{flavor.name}</p>
@@ -82,7 +94,7 @@ export const FlavorInput: React.FC<FlavorInputProps> = ({
                     </p>
                   </div>
                   <div className="flex flex-col items-end gap-1">
-                    <span className="bg-ice-primary/15 text-ice-primary inline-flex min-w-max rounded-full px-2.5 py-1 text-xs font-semibold">
+                    <span className="inline-flex min-w-max rounded-full px-2.5 py-1 text-xs font-semibold">
                       {flavor.base}
                     </span>
                     <span className="text-xs text-slate-500">

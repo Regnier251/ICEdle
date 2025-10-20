@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useGameLogic } from "../hooks/useGameLogic";
 import { useSupabase } from "../hooks/useSupabase";
 import type { IceCreamFlavor } from "../types/iceCream";
+import { DAILY_FLAVOR_KEY, DAY_IN_MS } from "../utils/constants";
 import { FlavorInput } from "./FlavorInput";
 import { GuessCard } from "./GuessCard";
 import { HintsSection } from "./HintsSection";
@@ -13,23 +14,92 @@ export const GameBoard: React.FC = () => {
   const [isLoadingFlavor, setIsLoadingFlavor] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
 
+  const usedFlavorIds = useMemo(
+    () => guesses.map((guess) => guess.flavor.id),
+    [guesses],
+  );
+
   const fetchDailyFlavor = useCallback(async () => {
     setIsLoadingFlavor(true);
     setFetchError(null);
-    const { data, error } = await supabase
-      .from("ice_cream_flavors")
-      .select("id, name, base, color, origin, flavor_intensity, texture, mix_ins, seasonality")
-      .limit(1)
-      .maybeSingle();
 
-    if (error) {
+    const selectFields =
+      "id, name, base, color, origin, flavor_intensity, texture, mix_ins, seasonality";
+
+    let storedFlavorId: number | null = null;
+    if (typeof window !== "undefined") {
+      try {
+        const storedValue = window.localStorage.getItem(DAILY_FLAVOR_KEY);
+        if (storedValue) {
+          const { flavorId, timestamp } = JSON.parse(storedValue) as {
+            flavorId: number;
+            timestamp: number;
+          };
+          if (Date.now() - timestamp < DAY_IN_MS) {
+            storedFlavorId = flavorId;
+          } else {
+            window.localStorage.removeItem(DAILY_FLAVOR_KEY);
+          }
+        }
+      } catch (storageError) {
+        console.error("Failed to read stored daily flavor", storageError);
+        window.localStorage.removeItem(DAILY_FLAVOR_KEY);
+      }
+    }
+
+    let selectedFlavor: IceCreamFlavor | null = null;
+    let encounteredError = false;
+
+    if (storedFlavorId) {
+      const { data, error } = await supabase
+        .from("ice_cream_flavors")
+        .select(selectFields)
+        .eq("id", storedFlavorId)
+        .maybeSingle();
+
+      if (data) {
+        selectedFlavor = data as IceCreamFlavor;
+      } else {
+        encounteredError = Boolean(error);
+        if (typeof window !== "undefined") {
+          window.localStorage.removeItem(DAILY_FLAVOR_KEY);
+        }
+      }
+    }
+
+    if (!selectedFlavor) {
+      // RPC supabase function
+      const { data, error } = await supabase
+        .rpc('get_random_ice_cream')
+        .select(selectFields)
+        .maybeSingle();
+
+      if (error) {
+        console.error('Error fetching random ice cream via RPC:', error);
+        encounteredError = true;
+      } else if (data) {
+        selectedFlavor = data as IceCreamFlavor;
+        if (typeof window !== "undefined") {
+          window.localStorage.setItem(
+            DAILY_FLAVOR_KEY,
+            JSON.stringify({
+              flavorId: selectedFlavor.id,
+              timestamp: Date.now(),
+            }),
+          );
+        }
+      } else {
+        encounteredError = true;
+      }
+    }
+
+    if (!selectedFlavor || encounteredError) {
       setFetchError("No pudimos cargar el sabor del día.");
       setTargetFlavor(null);
-    } else if (data) {
-      setTargetFlavor(data as IceCreamFlavor);
     } else {
-      setTargetFlavor(null);
+      setTargetFlavor(selectedFlavor);
     }
+
     setIsLoadingFlavor(false);
   }, [supabase, setTargetFlavor]);
 
@@ -43,6 +113,22 @@ export const GameBoard: React.FC = () => {
     submitGuess(flavor);
   };
 
+  const headers = [
+    "Name",
+    "Base",
+    "Color",
+    "Origin",
+    "Intensity",
+    "Texture",
+    "Mix-ins",
+    "Season",
+  ];
+
+  const headerClass =
+    "h-12 flex items-center justify-center transition-all cursor-pointer rounded-xl bg-white/80 px-4 shadow-sm backdrop-blur duration-200 hover:scale-110";
+  const textClass =
+    "text-sm font-semibold tracking-wider uppercase";
+
   return (
     <div className="mx-auto w-3/4 max-w-6xl px-4 py-6 sm:px-6 lg:px-10">
       <div className="flex flex-col gap-12">
@@ -50,7 +136,7 @@ export const GameBoard: React.FC = () => {
           <div className="space-y-3">
             <div className="flex w-full justify-center">
               <img
-                src="/public/image/ICEdle_title.png"
+                src="/image/ICEdle_title.png"
                 alt="ICEdle Logo"
                 className="mx-auto h-32 w-auto cursor-pointer object-contain transition-all duration-200 hover:scale-110 sm:h-40"
               />
@@ -69,7 +155,7 @@ export const GameBoard: React.FC = () => {
                   </div>
                   <div className="rounded-2xl bg-slate-100 px-4 text-center text-xs font-semibold tracking-widest text-slate-600 uppercase">
                     Intentos realizados{" "}
-                    <span className="bg-ice-primary/15 text-ice-primary ml-2 rounded-full px-2 py-1 text-sm font-bold">
+                    <span className="ml-2 rounded-full px-2 py-1 text-sm font-bold">
                       {totalGuesses}
                     </span>
                   </div>
@@ -77,12 +163,13 @@ export const GameBoard: React.FC = () => {
                 {/* Input component */}
                   <FlavorInput
                     onSubmit={handleGuess}
+                    usedFlavorIds={usedFlavorIds}
                     disabled={
                       isLoadingFlavor || !targetFlavor || status === "won"
                     }
                   />
                 {fetchError && (
-                  <p className="bg-ice-incorrect/10 text-ice-incorrect mt-4 rounded-2xl px-4 py-3 text-sm">
+                  <p className="mt-4 rounded-2xl px-4 py-3 text-sm">
                     {fetchError}
                   </p>
                 )}
@@ -96,56 +183,15 @@ export const GameBoard: React.FC = () => {
 
             {/* Headers de atributos */}
             <div className="mb-6 grid grid-cols-8 gap-6">
-              <div className="h-[48px] flex items-center justify-center transaction-all cursor-pointer rounded-xl bg-white/80 px-4 shadow-sm backdrop-blur duration-200 hover:scale-110">
-                <span className="text-sm font-semibold tracking-wider text-slate-600 uppercase">
-                  Nombre
-                </span>
-              </div>
-              <div className="h-[48px] flex items-center justify-center transaction-all cursor-pointer rounded-xl bg-white/80 px-4 shadow-sm backdrop-blur duration-200 hover:scale-110">
-                <span className="text-sm font-semibold tracking-wider text-slate-600 uppercase">
-                  Base
-                </span>
-              </div>
-              <div className="h-[48px] flex items-center justify-center transaction-all cursor-pointer rounded-xl bg-white/80 px-4 shadow-sm backdrop-blur duration-200 hover:scale-110">
-                <span className="text-sm font-semibold tracking-wider text-slate-600 uppercase">
-                  Color
-                </span>
-              </div>
-              <div className="h-[48px] flex items-center justify-center transaction-all cursor-pointer rounded-xl bg-white/80 px-4 shadow-sm backdrop-blur duration-200 hover:scale-110">
-                <span className="text-sm font-semibold tracking-wider text-slate-600 uppercase">
-                  Origen
-                </span>
-              </div>
-              <div className="h-[48px] flex items-center justify-center transaction-all cursor-pointer rounded-xl bg-white/80 px-4 shadow-sm backdrop-blur duration-200 hover:scale-110">
-                <span className="text-sm font-semibold tracking-wider text-slate-600 uppercase">
-                  Intensidad
-                </span>
-              </div>
-              <div className="h-[48px] flex items-center justify-center transaction-all cursor-pointer rounded-xl bg-white/80 px-4 shadow-sm backdrop-blur duration-200 hover:scale-110">
-                <span className="text-sm font-semibold tracking-wider text-slate-600 uppercase">
-                  Textura
-                </span>
-              </div>
-              <div className="h-[48px] flex items-center justify-center transaction-all cursor-pointer rounded-xl bg-white/80 px-4 shadow-sm backdrop-blur duration-200 hover:scale-110">
-                <span className="text-sm font-semibold tracking-wider text-slate-600 uppercase">
-                  Mix-ins
-                </span>
-              </div>
-              <div className="h-[48px] flex items-center justify-center transaction-all cursor-pointer rounded-xl bg-white/80 px-4 shadow-sm backdrop-blur duration-200 hover:scale-110">
-                <span className="text-sm font-semibold tracking-wider text-slate-600 uppercase">
-                  Temporada
-                </span>
-              </div>
+              {headers.map((title) => (
+                <div key={title} className={headerClass}>
+                  <span className={textClass}>{title}</span>
+                </div>
+              ))}
             </div>
 
             {/* Historial de intentos */}
             <div className="relative flex flex-col-reverse gap-4">
-              {guesses.length === 0 && (
-                <p className="rounded-3xl border border-dashed border-slate-300 bg-white/70 p-6 text-center text-sm text-slate-500">
-                  Aún no registras intentos. Usa la búsqueda para seleccionar un
-                  sabor y comenzar.
-                </p>
-              )}
               {guesses.map((guess, index) => (
                 <div
                   key={`${guess.flavor.id}-${index}`}
