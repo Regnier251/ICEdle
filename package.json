@@ -9,7 +9,6 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "start": "vite preview --port $PORT"
-    
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.75.0",
