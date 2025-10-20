@@ -47,11 +47,11 @@ export const GameBoard: React.FC = () => {
   "Name",
   "Base",
   "Color",
-  "Origen",
-  "Intensidad",
-  "Textura",
+  "Origin",
+  "Intensity",
+  "Texture",
   "Mix-ins",
-  "Temporada",
+  "Season",
 ];
 
 const headerClass =
