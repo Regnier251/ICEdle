@@ -65,7 +65,6 @@ export const FlavorInput: React.FC<FlavorInputProps> = ({
         >
           {!disabled ? "Adivinar" : "Cargando sabor..."}
         </button>
-
         {!disabled && (query || isLoading || hasSuggestions || error) && (
           <div className="absolute top-[calc(100%+0.5rem)] right-0 left-0 z-20 max-h-72 overflow-y-auto rounded-2xl border border-slate-200 bg-white/95 shadow-xl backdrop-blur-lg">
             {isLoading && (
@@ -90,7 +89,7 @@ export const FlavorInput: React.FC<FlavorInputProps> = ({
                   <div>
                     <p className="font-semibold text-slate-900">{flavor.name}</p>
                     <p className="text-xs text-slate-500">
-                      {flavor.origin || "Origen desconocido"} • {flavor.texture}
+                      {flavor.color} • {flavor.origin} 
                     </p>
                   </div>
                   <div className="flex flex-col items-end gap-1">
