@@ -86,7 +86,7 @@ const textClass =
                   </div>
                   <div className="rounded-2xl bg-slate-100 px-4 text-center text-xs font-semibold tracking-widest text-slate-600 uppercase">
                     Intentos realizados{" "}
-                    <span className="bg-ice-primary/15 text-ice-primary ml-2 rounded-full px-2 py-1 text-sm font-bold">
+                    <span className="ml-2 rounded-full px-2 py-1 text-sm font-bold">
                       {totalGuesses}
                     </span>
                   </div>
@@ -99,7 +99,7 @@ const textClass =
                     }
                   />
                 {fetchError && (
-                  <p className="bg-ice-incorrect/10 text-ice-incorrect mt-4 rounded-2xl px-4 py-3 text-sm">
+                  <p className="mt-4 rounded-2xl px-4 py-3 text-sm">
                     {fetchError}
                   </p>
                 )}

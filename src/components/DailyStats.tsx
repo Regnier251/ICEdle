@@ -9,7 +9,7 @@ export const DailyStats: React.FC<DailyStatsProps> = ({
   winRate = 0,
   totalGames = 0,
 }) => (
-  <section className="to-ice-primary/10 rounded-3xl border border-white/60 bg-gradient-to-br from-white/90 via-white/70 p-6 shadow-lg backdrop-blur">
+  <section className="rounded-3xl border border-white/60 bg-gradient-to-br from-white/90 via-white/70 p-6 shadow-lg backdrop-blur">
     <header className="flex items-center justify-between gap-3">
       <div>
         <h2 className="text-lg font-semibold text-slate-900">Estadísticas</h2>
@@ -17,7 +17,7 @@ export const DailyStats: React.FC<DailyStatsProps> = ({
           Rendimiento diario
         </p>
       </div>
-      <span className="bg-ice-primary/15 text-ice-primary rounded-full px-3 py-1 text-xs font-semibold">
+      <span className="rounded-full px-3 py-1 text-xs font-semibold">
         Beta
       </span>
     </header>
@@ -27,7 +27,7 @@ export const DailyStats: React.FC<DailyStatsProps> = ({
         <p className="text-xs font-semibold tracking-wide text-slate-500 uppercase">
           Racha
         </p>
-        <p className="text-ice-primary mt-2 text-3xl font-bold">{streak}</p>
+        <p className="mt-2 text-3xl font-bold">{streak}</p>
         <p className="text-xs text-slate-500">Días seguidos acertando</p>
       </div>
       <div className="rounded-2xl bg-white/70 p-4 text-center shadow-sm">

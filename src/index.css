@@ -35,19 +35,8 @@
   }
 
   body {
-    background: linear-gradient(
-      to bottom right,
-      rgb(var(--ice-cream)),
-      white,
-      rgb(var(--ice-primary) / 0.1)
-    );
     min-height: 100vh;
     color: rgb(15 23 42);
     font-smooth: antialiased;
-  }
-
-  ::selection {
-    background-color: rgb(var(--ice-primary) / 0.7);
-    color: white;
   }
 }
