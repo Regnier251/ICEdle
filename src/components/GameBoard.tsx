@@ -122,11 +122,11 @@ const textClass =
 
             {/* Historial de intentos */}
             <div className="relative flex flex-col-reverse gap-4">
-              {guesses.length === 0 && (
+              {/* {guesses.length === 0 && (
                 <p className="rounded-3xl border border-dashed border-slate-300 bg-white/70 p-6 text-center text-sm text-slate-500">
                   Aún no registras intentos. Usa la búsqueda para seleccionar un sabor y comenzar.
                 </p>
-              )}
+              )} */}
               {guesses.map((guess, index) => (
                 <div
                   key={`${guess.flavor.id}-${index}`}
