@@ -19,7 +19,7 @@ export const HintsSection: React.FC<HintsSectionProps> = ({
       {
         id: 1,
         unlockAt: 5,
-        text: `Este helado tiene un sabor de ${targetFlavor.flavor_intensity.toLowerCase()}.`,
+        text: `Este helado tiene un sabor ${targetFlavor.flavor_intensity.toLowerCase()}.`,
         icon: '🌟',
         type: 'flavor',
         isRevealed: revealedHints.includes(1),

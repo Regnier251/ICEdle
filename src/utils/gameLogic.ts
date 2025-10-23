@@ -13,29 +13,58 @@ export interface Hint {
   isUnlocked: boolean;
 }
 
-const normalize = (value: string) =>
-  value
+const normalize = (value: string | null | undefined) =>
+  (value ?? "")
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .trim()
     .toLowerCase();
 
-const compareExact = (guess: string, target: string): MatchStatus =>
-  normalize(guess) === normalize(target) ? "correct" : "incorrect";
+const compareExact = (
+  guess: string | null | undefined,
+  target: string | null | undefined,
+): MatchStatus => {
+  const normalizedGuess = normalize(guess);
+  const normalizedTarget = normalize(target);
 
-const tokenize = (value: string) =>
+  if (!normalizedGuess && !normalizedTarget) {
+    return "correct";
+  }
+
+  if (!normalizedTarget) {
+    return "incorrect";
+  }
+
+  return normalizedGuess === normalizedTarget ? "correct" : "incorrect";
+};
+
+const tokenize = (value: string | null | undefined) =>
   normalize(value)
     .split(/[^a-z0-9]+/)
     .filter(Boolean);
 
-const compareTextPartial = (guess: string, target: string): MatchStatus => {
-  if (compareExact(guess, target) === "correct") return "correct";
+const compareTextPartial = (
+  guess: string | null | undefined,
+  target: string | null | undefined,
+): MatchStatus => {
   const normalizedGuess = normalize(guess);
   const normalizedTarget = normalize(target);
+
+  if (!normalizedGuess && !normalizedTarget) {
+    return "correct";
+  }
+
+  if (!normalizedGuess || !normalizedTarget) {
+    return "incorrect";
+  }
+
+  if (normalizedGuess === normalizedTarget) {
+    return "correct";
+  }
+
   if (
-    normalizedGuess &&
-    (normalizedTarget.includes(normalizedGuess) ||
-      normalizedGuess.includes(normalizedTarget))
+    normalizedTarget.includes(normalizedGuess) ||
+    normalizedGuess.includes(normalizedTarget)
   ) {
     return "partial";
   }

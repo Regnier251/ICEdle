@@ -3,10 +3,10 @@ export interface IceCreamFlavor {
   name: string;
   base: string;
   color: string;
-  origin: string;
+  origin: string | null;
   flavor_intensity: string;
   texture: string;
-  mix_ins: string;
+  mix_ins: string | null;
   seasonality: string;
 }
 
