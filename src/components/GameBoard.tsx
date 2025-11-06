@@ -130,7 +130,7 @@ export const GameBoard: React.FC = () => {
     "text-sm font-semibold tracking-wider uppercase";
 
   return (
-    <div className="mx-auto w-3/4 max-w-6xl px-4 py-6 sm:px-6 lg:px-10">
+    <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 lg:w-3/4 lg:px-10">
       <div className="flex flex-col gap-12">
         <header className="flex flex-col items-center gap-4 text-center">
           <div className="space-y-3">
@@ -181,29 +181,35 @@ export const GameBoard: React.FC = () => {
               </div>
             </div>
 
-            {/* Headers de atributos */}
-            <div className="mb-6 grid grid-cols-8 gap-6">
-              {headers.map((title) => (
-                <div key={title} className={headerClass}>
-                  <span className={textClass}>{title}</span>
+            {/* Headers e historial con desplazamiento horizontal */}
+            <div className="overflow-x-auto">
+              <div className="min-w-[38rem] md:min-w-[48rem] lg:min-w-[56rem]">
+                <div className="mb-6 grid grid-cols-8 gap-6">
+                  {headers.map((title) => (
+                    <div key={title} className={headerClass}>
+                      <span className={textClass}>{title}</span>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
 
-            {/* Historial de intentos */}
-            <div className="relative flex flex-col-reverse gap-4">
-              {guesses.map((guess, index) => (
-                <div
-                  key={`${guess.flavor.id}-${index}`}
-                  className=""
-                  style={{
-                    transform: `translateY(${(guesses.length - index - 1) * -4}px)`,
-                    zIndex: guesses.length - index,
-                  }}
-                >
-                  <GuessCard guess={guess} index={guesses.length - index - 1} />
+                <div className="relative flex flex-col-reverse gap-4 pb-2">
+                  {guesses.map((guess, index) => (
+                    <div
+                      key={`${guess.flavor.id}-${index}`}
+                      className=""
+                      style={{
+                        transform: `translateY(${(guesses.length - index - 1) * -4}px)`,
+                        zIndex: guesses.length - index,
+                      }}
+                    >
+                      <GuessCard
+                        guess={guess}
+                        index={guesses.length - index - 1}
+                      />
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
             </div>
           </div>
         </section>

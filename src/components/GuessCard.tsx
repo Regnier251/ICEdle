@@ -21,7 +21,7 @@ export const GuessCard: React.FC<GuessCardProps> = ({ guess}) => {
 
   return (
     <article>
-      <div className="grid grid-cols-8 gap-6 min-w-5xl borde">
+      <div className="grid min-w-[38rem] md:min-w-[48rem] lg:min-w-[56rem] grid-cols-8 gap-6">
         {[
           { match: guess.matches.name, value: guess.flavor.name, delay: 0 },
           { match: guess.matches.base, value: guess.flavor.base, delay: 4 },
