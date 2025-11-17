@@ -1,8 +1,4 @@
-import type {
-  GuessMatches,
-  IceCreamFlavor,
-  MatchStatus,
-} from "../types/iceCream";
+import type { GuessMatches, IceCreamFlavor, MatchStatus} from "../types/iceCream";
 
 export interface Hint {
   id: number;

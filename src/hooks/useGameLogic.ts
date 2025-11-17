@@ -9,12 +9,6 @@ export const useGameLogic = () => {
   const [guesses, setGuesses] = useState<GuessResult[]>([]);
   const [status, setStatus] = useState<GameStatus>("playing");
 
-  const resetGame = (flavor: IceCreamFlavor | null) => {
-    setTargetFlavor(flavor);
-    setGuesses([]);
-    setStatus("playing");
-  };
-
   const submitGuess = (flavor: IceCreamFlavor) => {
     if (!targetFlavor || status !== "playing") return;
 
@@ -45,7 +39,6 @@ export const useGameLogic = () => {
     guesses,
     status,
     submitGuess,
-    resetGame,
     availableHints,
     nextHintInfo,
   };
