@@ -1,8 +1,27 @@
-ICEdle
-Video: https://youtu.be/tndMDuxVXcA
-Demo: https://www.icedle.com/
-Description:
+# ICEdle
 
-ICEdle is an interactive guessing game inspired by the popular Wordle, but reimagined with a whimsical, ice-cream–themed twist. The goal of the player is to guess a hidden ice cream flavor within a limited number of attempts. Each guess triggers visual and color-coded hints that indicate how close the player is to discovering the correct flavor. ICEdle was developed as my final project for CS50, integrating React, TypeScript, and Supabase (PostgreSQL) to create a modern, responsive, and enjoyable web-based game.
+## Video Demo
+https://youtu.be/tndMDuxVXcA
 
-My objective with this project was to build an experience that is fun, visually appealing, and easy to pick up, yet still challenging enough to keep players engaged. The theme allowed me to experiment with bright colors, soft shapes, and playful animations inspired by classic ice cream shops. I wanted to explore how gameplay similar to Wordle could be enhanced by a distinctive personality and a more dynamic interface, combining design and logic into a cohesive whole.
+## Description
+ICEdle is an interactive guessing game inspired by the popular Wordle, but reimagined with a whimsical, ice-cream–themed twist. The goal of the player is to guess a hidden ice cream flavor within a limited number of attempts. Each guess triggers visual and color-coded hints that indicate how close the player is to discovering the correct flavor.
+
+## Specification
+- **Game Logic:** Players to guess the hidden ice cream flavor
+- **Hint System:** Color-coded feedback for each guess (green = correct, yellow = close, gray = incorrect)
+- **Responsive Design:** Works on desktop and mobile devices
+- **Progress Tracking:** Tracks player history of guess
+- **Animation System:** Visual feedback for guesses and game state
+
+## Installation
+1. Clone this repository: `git clone https://github.com/Regnier251/ICEdle.git`
+2. Navigate to the project directory: `cd icedle`
+3. Install dependencies: `npm install`
+4. Start the development server: `npm start`
+5. Open http://localhost:3000 to view the game
+
+## Technologies Used
+- **Frontend:** React 18, TypeScript, TailwindCSS
+- **Backend:** Supabase (PostgreSQL)
+- **Deployment:** VRailway
+- **Version Control:** Git & GitHub
