@@ -8,5 +8,8 @@ export default defineConfig({
     host: '0.0.0.0',
     port: process.env.PORT ? Number(process.env.PORT) : 4173,
     allowedHosts: true
+  },
+  build: {
+    sourcemap: true
   }
 });

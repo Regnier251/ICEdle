@@ -17,8 +17,8 @@ ICEdle is an interactive guessing game inspired by the popular Wordle, but reima
 1. Clone this repository: `git clone https://github.com/Regnier251/ICEdle.git`
 2. Navigate to the project directory: `cd icedle`
 3. Install dependencies: `npm install`
-4. Start the development server: `npm start`
-5. Open http://localhost:3000 to view the game
+4. Start the development server: `npm run dev`
+5. Open http://localhost:5173 to view the game
 
 ## Technologies Used
 - **Frontend:** React 18, TypeScript, TailwindCSS
